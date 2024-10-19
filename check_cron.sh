@@ -33,8 +33,8 @@ else
   fi
 fi
 
-if [ -e "/home/${USER}/.vmess/config.json"]; then
+if [ -e "/home/${USER}/.vmess/config.json" ]; then
   echo "添加vmess重启任务"
-  (crontab -l; echo "*/12 * * * * pgrep -x "web" > /dev/null || nohup /home/${USER}/.vmess/web run -c /home/${USER}/.vmess/config.json >/dev/null 2>&1 &") | crontab -
-  (crontab -l; echo "*/12 * * * * pgrep -x "bot" > /dev/null || nohup /home/${USER}/.vmess/bot tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${VMESS_TOKEN} >/dev/null 2>&1 &") | crontab -
+  (crontab -l; echo "*/12 * * * * pgrep -x \"web\" > /dev/null || nohup /home/${USER}/.vmess/web run -c /home/${USER}/.vmess/config.json >/dev/null 2>&1 &") | crontab -
+  (crontab -l; echo "*/12 * * * * pgrep -x \"bot\" > /dev/null || nohup /home/${USER}/.vmess/bot tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${VMESS_TOKEN} >/dev/null 2>&1 &") | crontab -
 fi
