@@ -8,6 +8,7 @@ CRON_NEZHA="nohup ${WORKDIR}/start.sh >/dev/null 2>&1 &"
 PM2_PATH="/home/${USER}/.npm-global/lib/node_modules/pm2/bin/pm2"
 CRON_JOB="*/12 * * * * $PM2_PATH resurrect >> /home/$(whoami)/pm2_resurrect.log 2>&1"
 REBOOT_COMMAND="@reboot pkill -kill -u $(whoami) && $PM2_PATH resurrect >> /home/$(whoami)/pm2_resurrect.log 2>&1"
+VMESS_TOKEN="eyJhIjoiOTdiMGE1ZjM4NTJiZWVmNTcwMmQ0MjQ4NzlmMjQ5YTciLCJ0IjoiMzgwYTc5MGItMmIyNC00ZmU4LTlmYzEtOGUyODZiZjdiN2E5IiwicyI6Ik5XUTFOVEEyT1RFdFpUTmhZeTAwTTJVeUxXSTFORE10TW1ZeE4yVmxaRFZsTkRrNCJ9"
 
 echo "检查并添加 crontab 任务"
 
@@ -30,4 +31,10 @@ else
     (crontab -l | grep -F "@reboot pkill -kill -u $(whoami) && ${CRON_S5}") || (crontab -l; echo "@reboot pkill -kill -u $(whoami) && ${CRON_S5}") | crontab -
     (crontab -l | grep -F "* * pgrep -x \"s5\" > /dev/null || ${CRON_S5}") || (crontab -l; echo "*/12 * * * * pgrep -x \"s5\" > /dev/null || ${CRON_S5}") | crontab -
   fi
+fi
+
+if [ -e "/home/${USER}/.vmess/config.json"]; then
+  echo "添加vmess重启任务"
+  (crontab -l; echo "*/12 * * * * pgrep -x "web" > /dev/null || nohup /home/${USER}/.vmess/web run -c /home/${USER}/.vmess/config.json >/dev/null 2>&1 &") | crontab -
+  (crontab -l; echo "*/12 * * * * pgrep -x "bot" > /dev/null || nohup /home/${USER}/.vmess/bot tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${VMESS_TOKEN} >/dev/null 2>&1 &") | crontab -
 fi
